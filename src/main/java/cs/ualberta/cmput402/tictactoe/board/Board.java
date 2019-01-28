@@ -1,6 +1,8 @@
 package cs.ualberta.cmput402.tictactoe.board;
 
 import cs.ualberta.cmput402.tictactoe.board.exceptions.InvalidMoveException;
+import java.util.ArrayList;
+
 
 /**
  * Created by snadi on 2018-07-16.
@@ -12,11 +14,18 @@ public class Board {
     private Player winner;
     private Player board[][];
 
+    public int scoreX = 0;
+    public int scoreO  = 0;
+    private boolean tieFlag;
+    private int ties;
+
     public Board(){
         board = new Player[3][3];
         initBoard();
         winner = null;
         currentPlayer = Player.X;
+        tieFlag = false;
+        ties = 0;
     }
 
     private void initBoard(){
@@ -46,10 +55,16 @@ public class Board {
 
             if (hasWon(row, col))
                 winner = currentPlayer;
+            else if (checkTie()) {
+                tieFlag = checkTie();
+                setTies(getTies() + 1);
+            }
             else if(currentPlayer == Player.X)
                 currentPlayer = Player.O;
             else
                 currentPlayer = Player.X;
+
+
         }
 
     }
@@ -116,7 +131,30 @@ public class Board {
         }
     }
 
-    public Player getCurrentPlayer() {
+    public void updateScore(){
+
+        currentPlayer = getWinner();
+
+        if (currentPlayer == Player.X){
+            scoreX++;
+        }
+
+        if(currentPlayer == Player.O){
+            scoreO++;
+        }
+
+    }
+
+    public void printScoreBoard() {
+        System.out.println("Score Board");
+        System.out.println("----------");
+        System.out.println("X has won: " + scoreX + " times, and lost: " + scoreO + " times");
+        System.out.println("O has won: " + scoreO + " times, and lost: " + scoreX + " times");
+        System.out.println("Number of ties: " + ties );
+        System.out.println("----------");
+    }
+
+	public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
@@ -128,5 +166,33 @@ public class Board {
         return board[row][col];
     }
 
+    public void resetBoard(){
+        initBoard();
+        winner = null;
+        currentPlayer = Player.X;
+        tieFlag = false;
+    }
 
+    public boolean isTie() {
+        return this.tieFlag;
+    }
+
+    private boolean checkTie() {
+        for (int i = 0; i < 3; i++)  {
+            for(int j = 0; j < 3; j++) {
+                if (board[i][j] == Player.NONE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public int getTies() {
+        return this.ties;
+    }
+
+    public void setTies(int ties) {
+        this.ties = ties;
+    }
 }

@@ -31,23 +31,45 @@ public class TicTacToeGame {
 
     public void playGame(){
         Scanner keyboardScanner = new Scanner(System.in);
-
-        while (board.getWinner() == null){
-            board.printBoard();
-            promptNextPlayer();
-            String line = keyboardScanner.nextLine();
-            String input[] = line.split(",");
-            try {
-                board.playMove(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
-            } catch (InvalidMoveException e) {
-                System.out.println("Invalid coordinates. Try again");
+        while (true){
+            while (board.getWinner() == null && !(board.isTie())){
+                board.printBoard();
                 promptNextPlayer();
+                String line = keyboardScanner.nextLine();
+                String input[] = line.split(",");
+                try {
+                    board.playMove(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
+                } catch (InvalidMoveException e){
+                    System.out.println("Invalid coordinates. Try again");
+                    promptNextPlayer();
+                }
+            }
+
+            board.printBoard();
+            board.updateScore();
+
+            if (board.isTie()){
+                System.out.println("Tie game!");
+            }
+            else {
+                System.out.println("Player " + board.getWinner() + " has won the game!");
+            }
+
+            // Ask user if they would like to play again
+            System.out.println("Would you like to play again [y/n]?");
+            String line = keyboardScanner.nextLine();
+
+            if(line.equalsIgnoreCase("y")){
+                board.resetBoard();
+            }
+            else {
+                board.printScoreBoard();
+                break;
             }
         }
 
-        board.printBoard();
-        System.out.println("Player " + board.getWinner() + " has won the game!");
     }
+
 
     public static void main(String args[]){
         TicTacToeGame game = new TicTacToeGame();
